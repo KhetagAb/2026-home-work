@@ -9,6 +9,7 @@ import company.vk.edu.distrib.compute.artttnik.MyKVServiceFactory;
 import company.vk.edu.distrib.compute.b10nicle.B10nicleKVServiceFactory;
 import company.vk.edu.distrib.compute.gavrilova_ekaterina.InMemoryKVServiceFactory;
 import company.vk.edu.distrib.compute.ip.PopovIgorKVServiceFactoryImpl;
+import company.vk.edu.distrib.compute.khetagab.KhetagKvServiceFactory;
 import company.vk.edu.distrib.compute.kirillmedvedev23.KirillmedvedevFileSystemKVServiceFactory;
 import company.vk.edu.distrib.compute.kirillmedvedev23.KirillmedvedevKVServiceFactory;
 import company.vk.edu.distrib.compute.korjick.CakeKVServiceFactory;
@@ -46,7 +47,8 @@ public class KVServiceFactoryArgumentsProvider implements ArgumentsProvider {
         KirillmedvedevFileSystemKVServiceFactory.class,
         LuckySlon2003KVServiceFactory.class,
         Wolfram158KVServiceFactoryFileWithCacheImpl.class,
-        CakeKVServiceFactory.class
+        CakeKVServiceFactory.class,
+        KhetagKvServiceFactory.class
     );
 
     @Override
