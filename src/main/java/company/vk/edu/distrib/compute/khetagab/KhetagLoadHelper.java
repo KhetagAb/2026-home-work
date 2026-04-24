@@ -7,11 +7,11 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class KhetagLoadMain {
+public final class KhetagLoadHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(KhetagLoadMain.class);
+    private static final Logger log = LoggerFactory.getLogger(KhetagLoadHelper.class);
 
-    private KhetagLoadMain() {
+    private KhetagLoadHelper() {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {

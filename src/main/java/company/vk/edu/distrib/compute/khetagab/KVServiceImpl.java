@@ -34,9 +34,7 @@ public class KVServiceImpl implements KVService {
         try {
             dao.close();
         } catch (IOException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("could not release filesystem storage cleanly", e);
-            }
+            log.warn("could not release filesystem storage cleanly", e);
         }
     }
 }
