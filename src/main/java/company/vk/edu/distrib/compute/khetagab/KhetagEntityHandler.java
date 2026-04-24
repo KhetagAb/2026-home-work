@@ -38,9 +38,7 @@ public final class KhetagEntityHandler implements HttpHandler {
             } catch (IllegalArgumentException e) {
                 replyWithoutBody(ex, HttpCodes.BAD_REQUEST);
             } catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("entity endpoint: unexpected failure", e);
-                }
+                log.error("entity endpoint: unexpected failure", e);
                 replyWithoutBody(ex, HttpCodes.INTERNAL_ERROR);
             }
         }

@@ -7,14 +7,14 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class KhetagLoadMain {
+public final class KhetagLoadHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(KhetagLoadMain.class);
+    private static final Logger log = LoggerFactory.getLogger(KhetagLoadHelper.class);
 
-    private KhetagLoadMain() {
+    private KhetagLoadHelper() {
     }
 
-    static void main(String[] args) throws IOException, InterruptedException {
+    static void main(String... args) throws IOException, InterruptedException {
         int port = args.length > 0 ? Integer.parseInt(args[0]) : 8080;
         KVService storage = new KhetagKvServiceFactory().create(port);
         storage.start();
