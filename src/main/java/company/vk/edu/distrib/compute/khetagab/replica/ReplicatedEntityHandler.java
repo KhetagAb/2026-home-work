@@ -1,7 +1,9 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.replica;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import company.vk.edu.distrib.compute.khetagab.EntityQueryUtils;
+import company.vk.edu.distrib.compute.khetagab.HttpCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

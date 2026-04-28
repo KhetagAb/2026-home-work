@@ -1,11 +1,12 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import company.vk.edu.distrib.compute.khetagab.HttpCodes;
 
 import java.io.IOException;
 
-public final class KhetagStatusHandler implements HttpHandler {
+public final class KhetagStatus implements HttpHandler {
 
     private static final int NO_BODY = -1;
 

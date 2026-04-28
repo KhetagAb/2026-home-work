@@ -1,4 +1,4 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.replica;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

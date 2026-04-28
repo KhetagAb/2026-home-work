@@ -1,4 +1,4 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.replica;
 
 import org.slf4j.Logger;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-final class ReplicaTimedOps {
+class ReplicaTimedOps {
 
     private final List<ReplicaStore> replicas;
     private final List<AtomicBoolean> replicaEnabled;
@@ -19,7 +19,7 @@ final class ReplicaTimedOps {
     private final long timeoutMs;
     private final Logger log;
 
-    ReplicaTimedOps(
+    public ReplicaTimedOps(
             List<ReplicaStore> replicas,
             List<AtomicBoolean> replicaEnabled,
             ExecutorService executor,
@@ -32,15 +32,15 @@ final class ReplicaTimedOps {
         this.log = log;
     }
 
-    int upsertAll(String id, byte[] payload, long ts) throws IOException {
+    public int upsertAll(String id, byte[] payload, long ts) throws IOException {
         return runWrites("PUT", id, store -> store.upsert(id, payload, ts));
     }
 
-    int deleteAll(String id, long ts) throws IOException {
+    public int deleteAll(String id, long ts) throws IOException {
         return runWrites("DELETE", id, store -> store.delete(id, ts));
     }
 
-    GetReadResult getAll(String id) throws IOException {
+    public GetReadResult getAll(String id) throws IOException {
         int responses = 0;
         VersionedValue best = null;
         int n = replicas.size();

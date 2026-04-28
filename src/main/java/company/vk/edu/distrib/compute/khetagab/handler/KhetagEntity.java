@@ -1,8 +1,10 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import company.vk.edu.distrib.compute.Dao;
+import company.vk.edu.distrib.compute.khetagab.EntityQueryUtils;
+import company.vk.edu.distrib.compute.khetagab.HttpCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,14 +13,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.NoSuchElementException;
 
-public final class KhetagEntityHandler implements HttpHandler {
+public final class KhetagEntity implements HttpHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(KhetagEntityHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(KhetagEntity.class);
     private static final int NO_BODY = -1;
 
     private final Dao<byte[]> dao;
 
-    public KhetagEntityHandler(Dao<byte[]> dao) {
+    public KhetagEntity(Dao<byte[]> dao) {
         this.dao = dao;
     }
 

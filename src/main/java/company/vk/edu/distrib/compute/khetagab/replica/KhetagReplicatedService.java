@@ -1,8 +1,9 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.replica;
 
 import com.sun.net.httpserver.HttpServer;
 import company.vk.edu.distrib.compute.ReplicatedService;
 
+import company.vk.edu.distrib.compute.khetagab.handler.KhetagStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,6 @@ public class KhetagReplicatedService implements ReplicatedService {
     public KhetagReplicatedService(int port) throws IOException {
         this.servicePort = port;
         this.replicaCount = KhetagReplicaConfig.replicaCount();
-        long replicaOpTimeoutMs = KhetagReplicaConfig.replicaOpTimeoutMs();
         Files.createDirectories(STORAGE_BASE);
         List<ReplicaStore> replicaStores = new ArrayList<>(replicaCount);
         List<AtomicBoolean> enabledFlags = new ArrayList<>(replicaCount);
@@ -44,8 +44,9 @@ public class KhetagReplicatedService implements ReplicatedService {
         this.replicas = List.copyOf(replicaStores);
         this.replicaEnabled = List.copyOf(enabledFlags);
         this.replicaOpExecutor = Executors.newFixedThreadPool(Math.max(4, replicaCount));
+        final long replicaOpTimeoutMs = KhetagReplicaConfig.replicaOpTimeoutMs();
         server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/v0/status", new KhetagStatusHandler());
+        server.createContext("/v0/status", new KhetagStatus());
         server.createContext(
                 "/v0/entity",
                 new ReplicatedEntityHandler(

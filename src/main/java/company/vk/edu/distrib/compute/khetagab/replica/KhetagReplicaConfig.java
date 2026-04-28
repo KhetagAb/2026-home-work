@@ -1,4 +1,4 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.replica;
 
 final class KhetagReplicaConfig {
 
@@ -30,7 +30,8 @@ final class KhetagReplicaConfig {
 
     private static long validateTimeoutMs(long ms) {
         if (ms < 1L) {
-            throw new IllegalArgumentException("Replica op timeout must be >= 1 ms; got " + ms + " from " + KhetagReplicaConfig.OP_TIMEOUT_MS_ENV);
+            throw new IllegalArgumentException(
+                    "Replica op timeout must be >= 1 ms; got " + ms + " from " + OP_TIMEOUT_MS_ENV);
         }
         return ms;
     }
@@ -38,7 +39,7 @@ final class KhetagReplicaConfig {
     private static int validateAtLeastThree(int n) {
         if (n < 3) {
             throw new IllegalArgumentException(
-                    "Replica count must be >= 3; got " + n + " from " + KhetagReplicaConfig.REPLICA_COUNT_ENV);
+                    "Replica count must be >= 3; got " + n + " from " + REPLICA_COUNT_ENV);
         }
         return n;
     }

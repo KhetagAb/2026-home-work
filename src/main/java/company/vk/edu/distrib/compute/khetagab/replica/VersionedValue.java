@@ -1,8 +1,8 @@
-package company.vk.edu.distrib.compute.khetagab;
+package company.vk.edu.distrib.compute.khetagab.replica;
 
 import java.util.Arrays;
 
-final class VersionedValue {
+public final class VersionedValue {
 
     private final byte[] data;
     private final long timestamp;
@@ -22,7 +22,7 @@ final class VersionedValue {
         return new VersionedValue(null, timestamp, true);
     }
 
-    byte[] getData() {
+    public byte[] getData() {
         return data == null ? null : Arrays.copyOf(data, data.length);
     }
 
@@ -30,7 +30,7 @@ final class VersionedValue {
         return timestamp;
     }
 
-    boolean isDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 }
