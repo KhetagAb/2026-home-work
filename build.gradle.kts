@@ -22,7 +22,7 @@ repositories {
 
 val reactiveGrpcVersion = "1.2.4"
 val grpcVersion = "1.58.0"
-val protobufVersion = "3.4.0"
+val protobufVersion = "3.25.5"
 
 dependencies {
     checkstyle("com.puppycrawl.tools:checkstyle:13.3.0")

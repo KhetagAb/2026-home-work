@@ -1,7 +1,6 @@
 package company.vk.edu.distrib.compute;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
@@ -13,7 +12,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled // todo remove the line to enable tests
 @ParameterizedClass
 @ArgumentsSource(KVClusterFactoryArgumentsProvider.class)
 public class ShardingTest extends TestBase {
