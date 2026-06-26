@@ -9,6 +9,7 @@ import company.vk.edu.distrib.compute.artttnik.MyKVServiceFactory;
 import company.vk.edu.distrib.compute.b10nicle.B10nicleKVServiceFactory;
 import company.vk.edu.distrib.compute.gavrilova_ekaterina.InMemoryKVServiceFactory;
 import company.vk.edu.distrib.compute.ip.PopovIgorKVServiceFactoryImpl;
+import company.vk.edu.distrib.compute.khetagab.KhetagKvServiceFactory;
 import company.vk.edu.distrib.compute.kirillmedvedev23.KirillmedvedevFileSystemKVServiceFactory;
 import company.vk.edu.distrib.compute.kirillmedvedev23.KirillmedvedevKVServiceFactory;
 import company.vk.edu.distrib.compute.korjick.CakeKVServiceFactory;
@@ -19,6 +20,7 @@ import company.vk.edu.distrib.compute.nihuaway00.NihuawayKVServiceFactory;
 import company.vk.edu.distrib.compute.shuuuurik.ShuuuurikFileKVServiceFactory;
 import company.vk.edu.distrib.compute.vitos23.Vitos23KVServiceFactory;
 import company.vk.edu.distrib.compute.vredakon.VredakonKVServiceFactory;
+
 import company.vk.edu.distrib.compute.wolfram158.Wolfram158KVServiceFactoryFileWithCacheImpl;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -41,6 +43,7 @@ public class KVServiceFactoryArgumentsProvider implements ArgumentsProvider {
         B10nicleKVServiceFactory.class,
         VredakonKVServiceFactory.class,
         PopovIgorKVServiceFactoryImpl.class,
+        KhetagKvServiceFactory.class,
         NesterukiaFileSystemKVServiceFactory.class,
         KirillmedvedevKVServiceFactory.class,
         KirillmedvedevFileSystemKVServiceFactory.class,
