@@ -14,7 +14,7 @@ public final class KhetagLoadMain {
     private KhetagLoadMain() {
     }
 
-    static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         int port = args.length > 0 ? Integer.parseInt(args[0]) : 8080;
         KVService storage = new KhetagKvServiceFactory().create(port);
         storage.start();

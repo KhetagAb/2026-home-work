@@ -8,11 +8,12 @@ import java.io.IOException;
 public final class KhetagStatusHandler implements HttpHandler {
 
     private static final int NO_BODY = -1;
+    private static final String METHOD_GET = "GET";
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try (HttpExchange ex = exchange) {
-            if (!"GET".equals(ex.getRequestMethod())) {
+            if (!METHOD_GET.equals(ex.getRequestMethod())) {
                 ex.sendResponseHeaders(HttpCodes.METHOD_NOT_ALLOWED, NO_BODY);
                 return;
             }

@@ -3,12 +3,14 @@ package company.vk.edu.distrib.compute.khetagab;
 import company.vk.edu.distrib.compute.Dao;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class FileSystemDao implements Dao<byte[]> {
@@ -25,9 +27,6 @@ public class FileSystemDao implements Dao<byte[]> {
     @Override
     public byte[] get(String key) throws NoSuchElementException, IllegalArgumentException, IOException {
         validateKeyPresent(key);
-        if (isUnsafePathKey(key)) {
-            throw new NoSuchElementException(key);
-        }
         Path file = resolveUnderRoot(key);
         if (!Files.isRegularFile(file)) {
             throw new NoSuchElementException(key);
@@ -39,9 +38,6 @@ public class FileSystemDao implements Dao<byte[]> {
     public void upsert(String key, byte[] value) throws IllegalArgumentException, IOException {
         Objects.requireNonNull(value, "value");
         validateKeyPresent(key);
-        if (isUnsafePathKey(key)) {
-            throw new IllegalArgumentException("Invalid key");
-        }
         Path file = resolveUnderRoot(key);
         Files.createDirectories(file.getParent());
         Files.write(file, value);
@@ -50,9 +46,6 @@ public class FileSystemDao implements Dao<byte[]> {
     @Override
     public void delete(String key) throws IllegalArgumentException, IOException {
         validateKeyPresent(key);
-        if (isUnsafePathKey(key)) {
-            return;
-        }
         Path file = resolveUnderRoot(key);
         Files.deleteIfExists(file);
     }
@@ -88,15 +81,11 @@ public class FileSystemDao implements Dao<byte[]> {
         }
     }
 
-    private static boolean isUnsafePathKey(String key) {
-        return key.indexOf('/') >= 0 || key.indexOf('\\') >= 0 || key.contains("..");
+    private static String toStorageFileName(String key) {
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(key.getBytes(StandardCharsets.UTF_8));
     }
 
     private Path resolveUnderRoot(String key) {
-        Path resolved = storageRoot.resolve(key).normalize();
-        if (!resolved.startsWith(storageRoot)) {
-            throw new IllegalArgumentException("Invalid key");
-        }
-        return resolved;
+        return storageRoot.resolve(toStorageFileName(key));
     }
 }

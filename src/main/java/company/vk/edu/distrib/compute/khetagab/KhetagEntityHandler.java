@@ -15,6 +15,9 @@ public final class KhetagEntityHandler implements HttpHandler {
 
     private static final Logger log = LoggerFactory.getLogger(KhetagEntityHandler.class);
     private static final int NO_BODY = -1;
+    private static final String METHOD_PUT = "PUT";
+    private static final String METHOD_GET = "GET";
+    private static final String METHOD_DELETE = "DELETE";
 
     private final Dao<byte[]> dao;
 
@@ -25,33 +28,45 @@ public final class KhetagEntityHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try (HttpExchange ex = exchange) {
-            try {
-                String method = ex.getRequestMethod();
-                switch (method) {
-                    case "PUT" -> runPut(ex);
-                    case "GET" -> runGet(ex);
-                    case "DELETE" -> runDelete(ex);
-                    case null, default -> replyWithoutBody(ex, HttpCodes.METHOD_NOT_ALLOWED);
-                }
-            } catch (NoSuchElementException e) {
-                replyWithoutBody(ex, HttpCodes.NOT_FOUND);
-            } catch (IllegalArgumentException e) {
-                replyWithoutBody(ex, HttpCodes.BAD_REQUEST);
-            } catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("entity endpoint: unexpected failure", e);
-                }
-                replyWithoutBody(ex, HttpCodes.INTERNAL_ERROR);
-            }
+            handleRequest(ex);
+        }
+    }
+
+    private void handleRequest(HttpExchange exchange) throws IOException {
+        try {
+            dispatchRequest(exchange);
+        } catch (NoSuchElementException e) {
+            replyWithoutBody(exchange, HttpCodes.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            replyWithoutBody(exchange, HttpCodes.BAD_REQUEST);
+        } catch (Exception e) {
+            logUnexpectedFailure(e);
+            replyWithoutBody(exchange, HttpCodes.INTERNAL_ERROR);
+        }
+    }
+
+    private void dispatchRequest(HttpExchange exchange) throws IOException {
+        String method = exchange.getRequestMethod();
+        switch (method) {
+            case METHOD_PUT -> runPut(exchange);
+            case METHOD_GET -> runGet(exchange);
+            case METHOD_DELETE -> runDelete(exchange);
+            case null, default -> replyWithoutBody(exchange, HttpCodes.METHOD_NOT_ALLOWED);
+        }
+    }
+
+    private static void logUnexpectedFailure(Exception e) {
+        if (log.isErrorEnabled()) {
+            log.error("entity endpoint: unexpected failure", e);
         }
     }
 
     private void runPut(HttpExchange exchange) throws IOException {
+        String id = EntityQueryUtils.parseEntityIdFromQuery(exchange.getRequestURI().getQuery());
         byte[] payload;
         try (InputStream in = exchange.getRequestBody()) {
             payload = in.readAllBytes();
         }
-        String id = EntityQueryUtils.parseEntityIdFromQuery(exchange.getRequestURI().getQuery());
         dao.upsert(id, payload);
         replyWithoutBody(exchange, HttpCodes.CREATED);
     }
