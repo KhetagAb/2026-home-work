@@ -16,6 +16,9 @@ public final class ReplicatedEntityHandler implements HttpHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ReplicatedEntityHandler.class);
     private static final int NO_BODY = -1;
+    private static final String METHOD_PUT = "PUT";
+    private static final String METHOD_GET = "GET";
+    private static final String METHOD_DELETE = "DELETE";
 
     private final List<AtomicBoolean> replicaEnabled;
     private final int replicaCount;
@@ -38,27 +41,35 @@ public final class ReplicatedEntityHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try (HttpExchange ex = exchange) {
-            try {
-                String query = ex.getRequestURI().getQuery();
-                String id = EntityQueryUtils.parseEntityIdFromQuery(query);
-                int ack = resolveAck(query);
-                if (ack <= 0 || ack > replicaCount) {
-                    replyWithoutBody(ex, HttpCodes.BAD_REQUEST);
-                    return;
-                }
-                String method = ex.getRequestMethod();
-                switch (method) {
-                    case "PUT" -> runPut(ex, id, ack);
-                    case "GET" -> runGet(ex, id, ack);
-                    case "DELETE" -> runDelete(ex, id, ack);
-                    case null, default -> replyWithoutBody(ex, HttpCodes.METHOD_NOT_ALLOWED);
-                }
-            } catch (IllegalArgumentException ex2) {
-                replyWithoutBody(ex, HttpCodes.BAD_REQUEST);
-            } catch (Exception ex2) {
-                log.error("entity endpoint: unexpected failure", ex2);
-                replyWithoutBody(ex, HttpCodes.INTERNAL_ERROR);
-            }
+            handleRequest(ex);
+        }
+    }
+
+    private void handleRequest(HttpExchange exchange) throws IOException {
+        try {
+            dispatchRequest(exchange);
+        } catch (IllegalArgumentException e) {
+            replyWithoutBody(exchange, HttpCodes.BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("entity endpoint: unexpected failure", e);
+            replyWithoutBody(exchange, HttpCodes.INTERNAL_ERROR);
+        }
+    }
+
+    private void dispatchRequest(HttpExchange exchange) throws IOException {
+        String query = exchange.getRequestURI().getQuery();
+        String id = EntityQueryUtils.parseEntityIdFromQuery(query);
+        int ack = resolveAck(query);
+        if (ack <= 0 || ack > replicaCount) {
+            replyWithoutBody(exchange, HttpCodes.BAD_REQUEST);
+            return;
+        }
+        String method = exchange.getRequestMethod();
+        switch (method) {
+            case METHOD_PUT -> runPut(exchange, id, ack);
+            case METHOD_GET -> runGet(exchange, id, ack);
+            case METHOD_DELETE -> runDelete(exchange, id, ack);
+            case null, default -> replyWithoutBody(exchange, HttpCodes.METHOD_NOT_ALLOWED);
         }
     }
 

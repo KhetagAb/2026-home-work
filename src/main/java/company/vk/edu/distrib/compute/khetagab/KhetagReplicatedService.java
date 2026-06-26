@@ -32,7 +32,6 @@ public class KhetagReplicatedService implements ReplicatedService {
     public KhetagReplicatedService(int port) throws IOException {
         this.servicePort = port;
         this.replicaCount = KhetagReplicaConfig.replicaCount();
-        long replicaOpTimeoutMs = KhetagReplicaConfig.replicaOpTimeoutMs();
         Files.createDirectories(STORAGE_BASE);
         List<ReplicaStore> replicaStores = new ArrayList<>(replicaCount);
         List<AtomicBoolean> enabledFlags = new ArrayList<>(replicaCount);
@@ -49,7 +48,8 @@ public class KhetagReplicatedService implements ReplicatedService {
         server.createContext(
                 "/v0/entity",
                 new ReplicatedEntityHandler(
-                        replicas, replicaEnabled, replicaCount, replicaOpExecutor, replicaOpTimeoutMs));
+                        replicas, replicaEnabled, replicaCount, replicaOpExecutor,
+                        KhetagReplicaConfig.replicaOpTimeoutMs()));
     }
 
     @Override

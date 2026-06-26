@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ final class VersionedFileReplicaStore implements ReplicaStore, AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(VersionedFileReplicaStore.class);
     private static final String VALUE_SUFFIX = ".v";
     private static final String TOMB_SUFFIX = ".t";
+    private static final long NO_VERSION = Long.MIN_VALUE;
 
     private final Path storageRoot;
     private final ReentrantLock lock = new ReentrantLock();
@@ -106,37 +108,59 @@ final class VersionedFileReplicaStore implements ReplicaStore, AutoCloseable {
     }
 
     private static VersionedValue readLatest(Path keyDir) throws IOException {
-        long bestTs = Long.MIN_VALUE;
-        boolean tomb = false;
-        Path valuePath = null;
+        LatestScan scan = scanLatestEntry(keyDir);
+        return scan.toVersionedValue();
+    }
+
+    private static LatestScan scanLatestEntry(Path keyDir) throws IOException {
+        LatestScan scan = new LatestScan();
         try (Stream<Path> stream = Files.list(keyDir)) {
-            for (Path p : stream.toList()) {
-                if (!Files.isRegularFile(p)) {
-                    continue;
-                }
-                String name = p.getFileName().toString();
-                Parsed parsed = parseVersionFileName(name);
-                if (parsed == null) {
-                    continue;
-                }
-                if (parsed.timestamp > bestTs) {
-                    bestTs = parsed.timestamp;
-                    tomb = parsed.tombstone;
-                    valuePath = tomb ? null : p;
-                } else if (parsed.timestamp == bestTs && parsed.tombstone) {
-                    tomb = true;
-                    valuePath = null;
-                }
+            for (Path path : stream.toList()) {
+                scan.consider(path);
             }
         }
-        if (bestTs == Long.MIN_VALUE) {
-            return null;
+        return scan;
+    }
+
+    private static final class LatestScan {
+        private long bestTs = NO_VERSION;
+        private boolean tomb;
+        private Optional<Path> valuePath = Optional.empty();
+
+        void consider(Path path) throws IOException {
+            if (!Files.isRegularFile(path)) {
+                return;
+            }
+            Parsed parsed = parseVersionFileName(path.getFileName().toString());
+            if (parsed == null) {
+                return;
+            }
+            applyCandidate(parsed, path);
         }
-        if (tomb) {
-            return VersionedValue.tombstone(bestTs);
+
+        private void applyCandidate(Parsed parsed, Path path) {
+            if (parsed.timestamp > bestTs) {
+                bestTs = parsed.timestamp;
+                tomb = parsed.tombstone;
+                valuePath = parsed.tombstone ? Optional.empty() : Optional.of(path);
+                return;
+            }
+            if (parsed.timestamp == bestTs && parsed.tombstone) {
+                tomb = true;
+                valuePath = Optional.empty();
+            }
         }
-        byte[] raw = Files.readAllBytes(valuePath);
-        return VersionedValue.of(raw, bestTs);
+
+        VersionedValue toVersionedValue() throws IOException {
+            if (bestTs == NO_VERSION) {
+                return null;
+            }
+            if (tomb) {
+                return VersionedValue.tombstone(bestTs);
+            }
+            byte[] raw = Files.readAllBytes(valuePath.orElseThrow());
+            return VersionedValue.of(raw, bestTs);
+        }
     }
 
     private record Parsed(long timestamp, boolean tombstone) {
